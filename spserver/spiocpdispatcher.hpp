@@ -20,12 +20,13 @@ class SP_Response;
 class SP_IocpEventArg;
 class SP_IocpMsgQueue;
 
-class SP_IocpDispatcher {
+class SP_IocpDispatcher
+{
 public:
-	SP_IocpDispatcher( SP_CompletionHandler * completionHandler, int maxThreads = 64 );
+	SP_IocpDispatcher(SP_CompletionHandler* completionHandler, int maxThreads = 64);
 	~SP_IocpDispatcher();
 
-	void setTimeout( int timeout );
+	void setTimeout(int timeout);
 
 	int getSessionCount();
 	int getReqQueueLength();
@@ -45,42 +46,42 @@ public:
 	 * @return 0 : OK, -1 : Fail, invalid fd
 	 * @note  handler will be deleted by dispatcher when the session is close
 	 */
-	int push( int fd, SP_Handler * handler, int needStart = 1 );
+	int push(int fd, SP_Handler* handler, int needStart = 1);
 
-	int push( int fd, SP_Handler * handler, SP_IOChannel * ioChannel, int needStart = 1 );
+	int push(int fd, SP_Handler* handler, SP_IOChannel* ioChannel, int needStart = 1);
 
 	/**
 	 * @brief register a timer into dispatcher
 	 * @param timeout : the interval for the timer
 	 * @note  handler will be deleted by dispatcher when the timer is terminated
 	 */
-	int push( const struct timeval * timeout, SP_TimerHandler * handler );
+	int push(const struct timeval* timeout, SP_TimerHandler* handler);
 
 	/**
 	 * @brief push a response
 	 */
-	int push( SP_Response * response );
+	int push(SP_Response* response);
 
 private:
 	int mIsShutdown;
 	int mIsRunning;
 	int mMaxThreads;
 
-	SP_IocpEventArg * mEventArg;
-	SP_CompletionHandler * mCompletionHandler;
+	SP_IocpEventArg* mEventArg;
+	SP_CompletionHandler* mCompletionHandler;
 
-	SP_IocpMsgQueue * mPushQueue;
+	SP_IocpMsgQueue* mPushQueue;
 
 	int start();
 
-	static sp_thread_result_t SP_THREAD_CALL eventLoop( void * arg );
+	static sp_thread_result_t SP_THREAD_CALL eventLoop(void* arg);
 
-	static void onPush( void * queueData, void * arg );
+	static void onPush(void* queueData, void* arg);
 
-	static void outputCompleted( void * arg );
+	static void outputCompleted(void* arg);
 
-	static void onTimer( void * arg );
-	static void timer( void * arg );
+	static void onTimer(void* arg);
+	static void timer(void* arg);
 };
 
 #endif

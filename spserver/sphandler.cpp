@@ -24,7 +24,7 @@ SP_CompletionHandler :: ~SP_CompletionHandler()
 
 //---------------------------------------------------------
 
-SP_DefaultCompletionHandler :: SP_DefaultCompletionHandler()
+SP_DefaultCompletionHandler::SP_DefaultCompletionHandler()
 {
 }
 
@@ -32,7 +32,7 @@ SP_DefaultCompletionHandler :: ~SP_DefaultCompletionHandler()
 {
 }
 
-void SP_DefaultCompletionHandler :: completionMessage( SP_Message * msg )
+void SP_DefaultCompletionHandler::completionMessage(SP_Message* msg)
 {
 	delete msg;
 }
@@ -43,7 +43,7 @@ SP_HandlerFactory :: ~SP_HandlerFactory()
 {
 }
 
-SP_CompletionHandler * SP_HandlerFactory :: createCompletionHandler() const
+SP_CompletionHandler* SP_HandlerFactory::createCompletionHandler() const
 {
 	return new SP_DefaultCompletionHandler();
 }

@@ -38,7 +38,7 @@ typedef int socklen_t;
 #define strncasecmp strnicmp
 #endif
 
-#define snprintf _snprintf
+//#define snprintf _snprintf
 #define pause()	Sleep((32767L << 16) + 32767)
 #define sleep(x) Sleep(x*1000)
 

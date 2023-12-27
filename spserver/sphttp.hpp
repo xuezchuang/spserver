@@ -13,34 +13,37 @@ class SP_HttpRequest;
 class SP_HttpResponse;
 class SP_HttpMsgParser;
 
-class SP_HttpHandler {
+class SP_HttpHandler
+{
 public:
 	virtual ~SP_HttpHandler();
 
-	virtual void handle( SP_HttpRequest * request, SP_HttpResponse * response ) = 0;
+	virtual void handle(SP_HttpRequest* request, SP_HttpResponse* response) = 0;
 
 	virtual void error();
 
 	virtual void timeout();
 };
 
-class SP_HttpHandlerFactory {
+class SP_HttpHandlerFactory
+{
 public:
 	virtual ~SP_HttpHandlerFactory();
 
-	virtual SP_HttpHandler * create() const = 0;
+	virtual SP_HttpHandler* create() const = 0;
 };
 
-class SP_HttpHandlerAdapterFactory : public SP_HandlerFactory {
+class SP_HttpHandlerAdapterFactory : public SP_HandlerFactory
+{
 public:
-	SP_HttpHandlerAdapterFactory( SP_HttpHandlerFactory * factory );
+	SP_HttpHandlerAdapterFactory(SP_HttpHandlerFactory* factory);
 
 	virtual ~SP_HttpHandlerAdapterFactory();
 
-	virtual SP_Handler * create() const;
+	virtual SP_Handler* create() const;
 
 private:
-	SP_HttpHandlerFactory * mFactory;
+	SP_HttpHandlerFactory* mFactory;
 };
 
 #endif

@@ -19,16 +19,17 @@ typedef struct tagSP_AcceptArg SP_AcceptArg_t;
 struct event;
 
 // leader/follower thread pool server
-class SP_LFServer {
+class SP_LFServer
+{
 public:
-	SP_LFServer( const char * bindIP, int port, SP_HandlerFactory * handlerFactory );
+	SP_LFServer(const char* bindIP, int port, SP_HandlerFactory* handlerFactory);
 	~SP_LFServer();
 
-	void setTimeout( int timeout );
-	void setMaxConnections( int maxConnections );
-	void setMaxThreads( int maxThreads );
-	void setReqQueueSize( int reqQueueSize, const char * refusedMsg );
-	void setIOChannelFactory( SP_IOChannelFactory * ioChannelFactory );
+	void setTimeout(int timeout);
+	void setMaxConnections(int maxConnections);
+	void setMaxThreads(int maxThreads);
+	void setReqQueueSize(int reqQueueSize, const char* refusedMsg);
+	void setIOChannelFactory(SP_IOChannelFactory* ioChannelFactory);
 
 	void shutdown();
 	int isRunning();
@@ -39,30 +40,30 @@ public:
 	void runForever();
 
 private:
-	char mBindIP[ 64 ];
+	char mBindIP[64];
 	int mPort;
 	int mIsShutdown;
 	int mIsRunning;
 
-	SP_AcceptArg_t * mAcceptArg;
+	SP_AcceptArg_t* mAcceptArg;
 
-	SP_EventArg * mEventArg;
+	SP_EventArg* mEventArg;
 
 	int mMaxThreads;
-	SP_ThreadPool * mThreadPool;
+	SP_ThreadPool* mThreadPool;
 
-	SP_CompletionHandler * mCompletionHandler;
+	SP_CompletionHandler* mCompletionHandler;
 
-	struct event * mEvAccept;
-	struct event * mEvSigInt, * mEvSigTerm;
+	struct event* mEvAccept;
+	struct event* mEvSigInt, * mEvSigTerm;
 
 	sp_thread_mutex_t mMutex;
 
 	void handleOneEvent();
 
-	static void lfHandler( void * arg );
+	static void lfHandler(void* arg);
 
-	static void sigHandler( int, short, void * arg );
+	static void sigHandler(int, short, void* arg);
 };
 
 #endif

@@ -12,59 +12,59 @@
 #include "spmsgdecoder.hpp"
 #include "sputils.hpp"
 
-SP_Request :: SP_Request()
+SP_Request::SP_Request()
 {
 	mDecoder = new SP_DefaultMsgDecoder();
 
-	memset( mClientIP, 0, sizeof( mClientIP ) );
+	memset(mClientIP, 0, sizeof(mClientIP));
 	mClientPort = 0;
 
-	memset( mServerIP, 0, sizeof( mServerIP ) );
+	memset(mServerIP, 0, sizeof(mServerIP));
 }
 
 SP_Request :: ~SP_Request()
 {
-	if( NULL != mDecoder ) delete mDecoder;
+	if(NULL != mDecoder) delete mDecoder;
 	mDecoder = NULL;
 }
 
-SP_MsgDecoder * SP_Request :: getMsgDecoder()
+SP_MsgDecoder* SP_Request::getMsgDecoder()
 {
 	return mDecoder;
 }
 
-void SP_Request :: setMsgDecoder( SP_MsgDecoder * decoder )
+void SP_Request::setMsgDecoder(SP_MsgDecoder* decoder)
 {
-	if( NULL != mDecoder ) delete mDecoder;
+	if(NULL != mDecoder) delete mDecoder;
 	mDecoder = decoder;
 }
 
-void SP_Request :: setClientIP( const char * clientIP )
+void SP_Request::setClientIP(const char* clientIP)
 {
-	sp_strlcpy( mClientIP, clientIP, sizeof( mClientIP ) );
+	sp_strlcpy(mClientIP, clientIP, sizeof(mClientIP));
 }
 
-const char * SP_Request :: getClientIP()
+const char* SP_Request::getClientIP()
 {
 	return mClientIP;
 }
 
-void SP_Request :: setClientPort( int port )
+void SP_Request::setClientPort(int port)
 {
 	mClientPort = port;
 }
 
-int SP_Request :: getClientPort()
+int SP_Request::getClientPort()
 {
 	return mClientPort;
 }
 
-void SP_Request :: setServerIP( const char * ip )
+void SP_Request::setServerIP(const char* ip)
 {
-	sp_strlcpy( mServerIP, ip, sizeof( mServerIP ) );
+	sp_strlcpy(mServerIP, ip, sizeof(mServerIP));
 }
 
-const char * SP_Request :: getServerIP()
+const char* SP_Request::getServerIP()
 {
 	return mServerIP;
 }

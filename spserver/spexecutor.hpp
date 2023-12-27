@@ -12,45 +12,48 @@
 class SP_ThreadPool;
 class SP_BlockingQueue;
 
-class SP_Task {
+class SP_Task
+{
 public:
 	virtual ~SP_Task();
 	virtual void run() = 0;
 };
 
-class SP_SimpleTask : public SP_Task {
+class SP_SimpleTask : public SP_Task
+{
 public:
-	typedef void ( * ThreadFunc_t ) ( void * );
+	typedef void (*ThreadFunc_t) (void*);
 
-	SP_SimpleTask( ThreadFunc_t func, void * arg, int deleteAfterRun );
+	SP_SimpleTask(ThreadFunc_t func, void* arg, int deleteAfterRun);
 	virtual ~SP_SimpleTask();
 
 	virtual void run();
 
 private:
 	ThreadFunc_t mFunc;
-	void * mArg;
+	void* mArg;
 
 	int mDeleteAfterRun;
 };
 
-class SP_Executor {
+class SP_Executor
+{
 public:
-	SP_Executor( int maxThreads, const char * tag = 0 );
+	SP_Executor(int maxThreads, const char* tag = 0);
 	~SP_Executor();
 
-	void execute( SP_Task * task );
-	void execute( void ( * func ) ( void * ), void * arg );
+	void execute(SP_Task* task);
+	void execute(void (*func) (void*), void* arg);
 	int getQueueLength();
 	void shutdown();
 
 private:
-	static void msgQueueCallback( void * queueData, void * arg );
-	static void worker( void * arg );
-	static sp_thread_result_t SP_THREAD_CALL eventLoop( void * arg );
+	static void msgQueueCallback(void* queueData, void* arg);
+	static void worker(void* arg);
+	static sp_thread_result_t SP_THREAD_CALL eventLoop(void* arg);
 
-	SP_ThreadPool * mThreadPool;
-	SP_BlockingQueue * mQueue;
+	SP_ThreadPool* mThreadPool;
+	SP_BlockingQueue* mQueue;
 
 	int mIsShutdown;
 

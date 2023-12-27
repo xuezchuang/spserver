@@ -18,69 +18,70 @@ class SP_IOChannel;
 
 struct event;
 
-class SP_Session {
+class SP_Session
+{
 public:
-	SP_Session( SP_Sid_t sid );
+	SP_Session(SP_Sid_t sid);
 	virtual ~SP_Session();
 
-	struct event * getReadEvent();	
-	struct event * getWriteEvent();	
+	struct event* getReadEvent();
+	struct event* getWriteEvent();
 
-	void setHandler( SP_Handler * handler );
-	SP_Handler * getHandler();
+	void setHandler(SP_Handler* handler);
+	SP_Handler* getHandler();
 
-	void setArg( void * arg );
-	void * getArg();
+	void setArg(void* arg);
+	void* getArg();
 
 	SP_Sid_t getSid();
 
-	SP_Buffer * getInBuffer();
-	SP_Request * getRequest();
+	SP_Buffer* getInBuffer();
+	SP_Request* getRequest();
 
-	void setOutOffset( int offset );
+	void setOutOffset(int offset);
 	int getOutOffset();
-	SP_ArrayList * getOutList();
+	SP_ArrayList* getOutList();
 
 	enum { eNormal, eWouldExit, eExit };
-	void setStatus( int status );
+	void setStatus(int status);
 	int getStatus();
 
 	int getRunning();
-	void setRunning( int running );
+	void setRunning(int running);
 
 	int getReading();
-	void setReading( int reading );
+	void setReading(int reading);
 
 	int getWriting();
-	void setWriting( int writing );
+	void setWriting(int writing);
 
-	SP_IOChannel * getIOChannel();
-	void setIOChannel( SP_IOChannel * ioChannel );
+	SP_IOChannel* getIOChannel();
+	void setIOChannel(SP_IOChannel* ioChannel);
 
 	unsigned int getTotalRead();
-	void addRead( int len );
+	void addRead(int len);
 
 	unsigned int getTotalWrite();
-	void addWrite( int len );
+	void addWrite(int len);
 
 private:
 
-	SP_Session( SP_Session & );
-	SP_Session & operator=( SP_Session & );
+	SP_Session(SP_Session&);
+	SP_Session& operator=(SP_Session&);
 
 	SP_Sid_t mSid;
 
-	struct event * mReadEvent;
-	struct event * mWriteEvent;
+	struct event* mReadEvent;
+	struct event* mWriteEvent;
 
-	SP_Handler * mHandler;
-	void * mArg;
+	SP_Handler* mHandler;
+	void* mArg;
 
-	SP_Buffer * mInBuffer;
-	SP_Request * mRequest;
+	SP_Buffer* mInBuffer;
+	SP_Request* mRequest;
 
 	int mOutOffset;
-	SP_ArrayList * mOutList;
+	SP_ArrayList* mOutList;
 
 	char mStatus;
 	char mRunning;
@@ -89,31 +90,32 @@ private:
 
 	unsigned int mTotalRead, mTotalWrite;
 
-	SP_IOChannel * mIOChannel;
+	SP_IOChannel* mIOChannel;
 };
 
 typedef struct tagSP_SessionEntry SP_SessionEntry_t;
 
-class SP_SessionManager {
+class SP_SessionManager
+{
 public:
 	SP_SessionManager();
 	~SP_SessionManager();
 
 	int getCount();
-	void put( uint32_t key, uint16_t seq, SP_Session * session );
-	SP_Session * get( uint32_t key, uint16_t * seq );
-	SP_Session * remove( uint32_t key, uint16_t seq );
+	void put(uint32_t key, uint16_t seq, SP_Session* session);
+	SP_Session* get(uint32_t key, uint16_t* seq);
+	SP_Session* remove(uint32_t key, uint16_t seq);
 
 	int getFreeCount();
 	// > 0 : OK, 0 : out of memory
-	uint32_t allocKey( uint16_t * seq );
+	uint32_t allocKey(uint16_t* seq);
 
 private:
 	enum { eColPerRow = 1024 };
-  enum { eRowNum = 64*16};
-  
+	enum { eRowNum = 64 * 16 };
+
 	int mCount;
-	SP_SessionEntry_t * mArray[ eRowNum ];
+	SP_SessionEntry_t* mArray[eRowNum];
 
 	int mFreeCount;
 	uint16_t mFreeList;

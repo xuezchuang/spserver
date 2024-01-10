@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\spserver">
+      <UniqueIdentifier>{c6970b92-75ef-4b07-95b7-f63f6660db87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\spopenssl">
+      <UniqueIdentifier>{a8b31f3c-302f-4aa4-b42c-0b1278582e36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\business">
+      <UniqueIdentifier>{1ec8975a-553b-4a97-9345-0aa1baeab173}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\spserver\spbuffer.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spdispatcher.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\speventcb.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spexecutor.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\sphandler.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\sphttp.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\sphttpmsg.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spiochannel.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spiocpdispatcher.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spiocpevent.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spiocplfserver.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spiocpserver.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spioutils.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\splfserver.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spmsgblock.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spmsgdecoder.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\sprequest.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spresponse.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spserver.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spsession.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spsmtp.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spthread.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spthreadpool.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\sputils.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spwin32buffer.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spwin32iocp.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spwin32port.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testchat.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testchat_d.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testdispatcher.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testecho.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testhttp.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testhttp_d.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testhttpmsg.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testiocpchat.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testiocpdispatcher.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testiocpecho.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testiocphttp.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testiocpstress.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testsmtp.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\teststress.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testthreadpool.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testunp.cpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\spgetopt.c">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\event_msgqueue.c">
+      <Filter>Resource Files\spserver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\openssl\spopenssl.cpp">
+      <Filter>Resource Files\spopenssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\openssl\testiocphttps.cpp">
+      <Filter>Resource Files\spopenssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\openssl\testhttps.cpp">
+      <Filter>Resource Files\spopenssl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\business\workHttp.cpp">
+      <Filter>Resource Files\business</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\spserver\spiocplfserver.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spiocpserver.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spioutils.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\splfserver.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spmsgblock.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spmsgdecoder.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spporting.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\sprequest.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spresponse.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spserver.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spsession.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spsmtp.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spthread.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spthreadpool.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\sputils.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spwin32buffer.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spwin32iocp.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spwin32port.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spbuffer.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spdispatcher.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\speventcb.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spexecutor.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spgetopt.h">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\sphandler.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\sphttp.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\sphttpmsg.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spiochannel.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spiocpdispatcher.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\spiocpevent.hpp">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\spserver\event_msgqueue.h">
+      <Filter>Resource Files\spserver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\openssl\spopenssl.hpp">
+      <Filter>Resource Files\spopenssl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\business\workHttp.h">
+      <Filter>Resource Files\business</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

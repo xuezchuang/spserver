@@ -1,0 +1,6 @@
+[submodule "win32/x64/Debug/layuimini"]
+	path = win32/x64/Debug/layuimini
+	url = git@github.com:xuezchuang/layuimini.git
+[submodule "thirdparty/libevent"]
+	path = thirdparty/libevent
+	url = git@github.com:xuezchuang/libevent.git

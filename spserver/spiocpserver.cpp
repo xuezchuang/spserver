@@ -172,8 +172,7 @@ sp_thread_result_t SP_THREAD_CALL SP_IocpServer::acceptThread(void* arg)
 
 	for(; ; )
 	{
-		acceptArg->mClientSocket = (HANDLE)WSASocket(AF_INET, SOCK_STREAM,
-													 IPPROTO_IP, NULL, 0, WSA_FLAG_OVERLAPPED);
+		acceptArg->mClientSocket = (HANDLE)WSASocket(AF_INET, SOCK_STREAM, IPPROTO_IP, NULL, 0, WSA_FLAG_OVERLAPPED);
 		if(INVALID_SOCKET == (int)acceptArg->mClientSocket)
 		{
 			sp_syslog(LOG_ERR, "WSASocket fail, errno %d", WSAGetLastError());
@@ -183,6 +182,10 @@ sp_thread_result_t SP_THREAD_CALL SP_IocpServer::acceptThread(void* arg)
 
 		SP_IOUtils::setNonblock((int)acceptArg->mClientSocket);
 		memset(&(acceptArg->mOverlapped), 0, sizeof(OVERLAPPED));
+
+		int recvBufferSize;
+		int size = sizeof(recvBufferSize);
+		getsockopt((SOCKET)acceptArg->mClientSocket, SOL_SOCKET, SO_RCVBUF, (char*)&recvBufferSize, &size);
 
 		BOOL ret = AcceptEx((SOCKET)acceptArg->mListenSocket, (SOCKET)acceptArg->mClientSocket,
 							acceptArg->mBuffer, 0, sizeof(struct sockaddr_in) + 16, sizeof(struct sockaddr_in) + 16,
@@ -223,7 +226,9 @@ int SP_IocpServer::start()
 		SP_IocpEventArg eventArg(mTimeout);
 		eventArg.loadDisconnectEx(listenFD);
 		SP_IocpMsgQueue* msgQueue = new SP_IocpMsgQueue(eventArg.getCompletionPort(),
-														SP_IocpEventCallback::eKeyMsgQueue, SP_IocpEventCallback::onResponse, &eventArg);
+														SP_IocpEventCallback::eKeyMsgQueue, 
+														SP_IocpEventCallback::onResponse,
+														&eventArg);
 		eventArg.setResponseQueue(msgQueue);
 		mCompletionPort = eventArg.getCompletionPort();
 
@@ -245,8 +250,7 @@ int SP_IocpServer::start()
 		acceptArg.mEventArg = &eventArg;
 		acceptArg.mListenSocket = (HANDLE)listenFD;
 
-		if(NULL == CreateIoCompletionPort(acceptArg.mListenSocket,
-		   eventArg.getCompletionPort(), SP_IocpEventCallback::eKeyAccept, 0))
+		if(NULL == CreateIoCompletionPort(acceptArg.mListenSocket, eventArg.getCompletionPort(), SP_IocpEventCallback::eKeyAccept, 0))
 		{
 			sp_syslog(LOG_ERR, "CreateIoCompletionPort fail, errno %d", WSAGetLastError());
 			return -1;

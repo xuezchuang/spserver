@@ -60,8 +60,7 @@ void* SP_ArrayList::takeItem(int index)
 
 	if((index + 1) < mMaxCount)
 	{
-		memmove(mFirst + index, mFirst + index + 1,
-				(mMaxCount - index - 1) * sizeof(void*));
+		memmove(mFirst + index, mFirst + index + 1, (mMaxCount - index - 1) * sizeof(void*));
 	}
 	else
 	{
@@ -238,8 +237,7 @@ int SP_BlockingQueue::getLength()
 
 //-------------------------------------------------------------------
 
-int sp_strtok(const char* src, int index, char* dest, int len,
-			  char delimiter, const char** next)
+int sp_strtok(const char* src, int index, char* dest, int len,char delimiter, const char** next)
 {
 	int ret = 0;
 

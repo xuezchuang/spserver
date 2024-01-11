@@ -19,12 +19,6 @@
     <ClCompile Include="..\..\spserver\spbuffer.cpp">
       <Filter>Resource Files\spserver</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\spserver\spdispatcher.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\speventcb.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\spserver\spexecutor.cpp">
       <Filter>Resource Files\spserver</Filter>
     </ClCompile>
@@ -55,9 +49,6 @@
     <ClCompile Include="..\..\spserver\spioutils.cpp">
       <Filter>Resource Files\spserver</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\spserver\splfserver.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\spserver\spmsgblock.cpp">
       <Filter>Resource Files\spserver</Filter>
     </ClCompile>
@@ -68,9 +59,6 @@
       <Filter>Resource Files\spserver</Filter>
     </ClCompile>
     <ClCompile Include="..\..\spserver\spresponse.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\spserver.cpp">
       <Filter>Resource Files\spserver</Filter>
     </ClCompile>
     <ClCompile Include="..\..\spserver\spsession.cpp">
@@ -97,54 +85,6 @@
     <ClCompile Include="..\..\spserver\spwin32port.cpp">
       <Filter>Resource Files\spserver</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\spserver\testchat.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testchat_d.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testdispatcher.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testecho.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testhttp.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testhttp_d.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testhttpmsg.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testiocpchat.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testiocpdispatcher.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testiocpecho.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testiocphttp.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testiocpstress.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testsmtp.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\teststress.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testthreadpool.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\spserver\testunp.cpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\spserver\spgetopt.c">
       <Filter>Resource Files\spserver</Filter>
     </ClCompile>
@@ -157,11 +97,11 @@
     <ClCompile Include="..\..\openssl\testiocphttps.cpp">
       <Filter>Resource Files\spopenssl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\openssl\testhttps.cpp">
-      <Filter>Resource Files\spopenssl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\business\workHttp.cpp">
       <Filter>Resource Files\business</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\spserver\testiocphttp.cpp">
+      <Filter>Resource Files\spserver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -172,9 +112,6 @@
       <Filter>Resource Files\spserver</Filter>
     </ClInclude>
     <ClInclude Include="..\..\spserver\spioutils.hpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\spserver\splfserver.hpp">
       <Filter>Resource Files\spserver</Filter>
     </ClInclude>
     <ClInclude Include="..\..\spserver\spmsgblock.hpp">
@@ -190,9 +127,6 @@
       <Filter>Resource Files\spserver</Filter>
     </ClInclude>
     <ClInclude Include="..\..\spserver\spresponse.hpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\spserver\spserver.hpp">
       <Filter>Resource Files\spserver</Filter>
     </ClInclude>
     <ClInclude Include="..\..\spserver\spsession.hpp">
@@ -220,12 +154,6 @@
       <Filter>Resource Files\spserver</Filter>
     </ClInclude>
     <ClInclude Include="..\..\spserver\spbuffer.hpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\spserver\spdispatcher.hpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\spserver\speventcb.hpp">
       <Filter>Resource Files\spserver</Filter>
     </ClInclude>
     <ClInclude Include="..\..\spserver\spexecutor.hpp">

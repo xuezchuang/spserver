@@ -21,6 +21,10 @@
 #include "spioutils.hpp"
 #include "spiochannel.hpp"
 
+#pragma comment(lib,"ws2_32")
+#pragma comment(lib,"mswsock")
+
+
 SP_IocpLFServer::SP_IocpLFServer(const char* bindIP, int port, SP_HandlerFactory* handlerFactory)
 {
 	snprintf(mBindIP, sizeof(mBindIP), "%s", bindIP);

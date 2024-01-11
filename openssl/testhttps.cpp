@@ -7,124 +7,155 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <syslog.h>
+//#include <syslog.h>
 #include <signal.h>
-#include <unistd.h>
+#include <assert.h>
+//#include <unistd.h>
+#include "spporting.hpp"
 
 #include "sphttp.hpp"
 #include "sphttpmsg.hpp"
 #include "spserver.hpp"
 #include "splfserver.hpp"
 #include "spopenssl.hpp"
+#include "spgetopt.h"
 
-class SP_HttpEchoHandler : public SP_HttpHandler {
+class SP_HttpEchoHandler : public SP_HttpHandler
+{
 public:
-	SP_HttpEchoHandler(){}
-	virtual ~SP_HttpEchoHandler(){}
+	SP_HttpEchoHandler() {}
+	virtual ~SP_HttpEchoHandler() {}
 
-	virtual void handle( SP_HttpRequest * request, SP_HttpResponse * response ) {
-		response->setStatusCode( 200 );
-		response->appendContent( "<html><head>"
-			"<title>Welcome to simple http</title>"
-			"</head><body>" );
+	virtual void handle(SP_HttpRequest* request, SP_HttpResponse* response)
+	{
+		response->setStatusCode(200);
+		response->appendContent("<html><head>"
+								"<title>Welcome to simple http</title>"
+								"</head><body>");
 
-		char buffer[ 512 ] = { 0 };
-		snprintf( buffer, sizeof( buffer ),
-			"<p>The requested URI is : %s.</p>", request->getURI() );
-		response->appendContent( buffer );
+		char buffer[512] = {0};
+		snprintf(buffer, sizeof(buffer),
+				 "<p>The requested URI is : %s.</p>", request->getURI());
+		response->appendContent(buffer);
 
-		snprintf( buffer, sizeof( buffer ),
-			"<p>Client IP is : %s.</p>", request->getClientIP() );
-		response->appendContent( buffer );
+		snprintf(buffer, sizeof(buffer),
+				 "<p>Client IP is : %s.</p>", request->getClientIP());
+		response->appendContent(buffer);
 
-		for( int i = 0; i < request->getParamCount(); i++ ) {
-			snprintf( buffer, sizeof( buffer ),
-				"<p>Param - %s = %s<p>", request->getParamName( i ), request->getParamValue( i ) );
-			response->appendContent( buffer );
+		for(int i = 0; i < request->getParamCount(); i++)
+		{
+			snprintf(buffer, sizeof(buffer),
+					 "<p>Param - %s = %s<p>", request->getParamName(i), request->getParamValue(i));
+			response->appendContent(buffer);
 		}
 
-		for( int i = 0; i < request->getHeaderCount(); i++ ) {
-			snprintf( buffer, sizeof( buffer ),
-				"<p>Header - %s: %s<p>", request->getHeaderName( i ), request->getHeaderValue( i ) );
-			response->appendContent( buffer );
+		for(int i = 0; i < request->getHeaderCount(); i++)
+		{
+			snprintf(buffer, sizeof(buffer),
+					 "<p>Header - %s: %s<p>", request->getHeaderName(i), request->getHeaderValue(i));
+			response->appendContent(buffer);
 		}
 
-		if( NULL != request->getContent() ) {
-			response->appendContent( "<p>" );
-			response->appendContent( request->getContent(), request->getContentLength() );
-			response->appendContent( "</p>" );
+		if(NULL != request->getContent())
+		{
+			response->appendContent("<p>");
+			response->appendContent(request->getContent(), request->getContentLength());
+			response->appendContent("</p>");
 		}
 
-		response->appendContent( "</body></html>\n" );
+		response->appendContent("</body></html>\n");
 	}
 };
 
-class SP_HttpEchoHandlerFactory : public SP_HttpHandlerFactory {
+class SP_HttpEchoHandlerFactory : public SP_HttpHandlerFactory
+{
 public:
-	SP_HttpEchoHandlerFactory(){}
-	virtual ~SP_HttpEchoHandlerFactory(){}
+	SP_HttpEchoHandlerFactory() {}
+	virtual ~SP_HttpEchoHandlerFactory() {}
 
-	virtual SP_HttpHandler * create() const {
+	virtual SP_HttpHandler* create() const
+	{
 		return new SP_HttpEchoHandler();
 	}
 };
 
-int main( int argc, char * argv[] )
+void sp_getbasepath(char* path, int size)
 {
-	int port = 8080, maxThreads = 10;
-	const char * serverType = "hahs";
+	spwin32_getexefile(GetCurrentProcessId(), path, size);
 
-	extern char *optarg ;
-	int c ;
+	char* pos = strrchr(path, '\\');
+	if(NULL != pos) *pos = '\0';
+}
 
-	while( ( c = getopt ( argc, argv, "p:t:s:v" )) != EOF ) {
-		switch ( c ) {
-			case 'p' :
-				port = atoi( optarg );
-				break;
-			case 't':
-				maxThreads = atoi( optarg );
-				break;
-			case 's':
-				serverType = optarg;
-				break;
-			case '?' :
-			case 'v' :
-				printf( "Usage: %s [-p <port>] [-t <threads>] [-s <hahs|lf>]\n", argv[0] );
-				exit( 0 );
-		}
-	}
+int main11(int argc, char* argv[])
+{
+	int port = 8080, maxThreads = 1;
+	const char* serverType = "hahs";
 
-#ifdef LOG_PERROR
-	openlog( "testhttps", LOG_CONS | LOG_PID | LOG_PERROR, LOG_USER );
-#else
-	openlog( "testhttps", LOG_CONS | LOG_PID, LOG_USER );
-#endif
+	extern char* optarg;
+	int c;
 
-	SP_OpensslChannelFactory * opensslFactory = new SP_OpensslChannelFactory();
-	opensslFactory->init( "demo.crt", "demo.key" );
+	//while((c = getopt(argc, argv, "p:t:s:v")) != EOF)
+	//{
+	//	switch(c)
+	//	{
+	//	case 'p':
+	//		port = atoi(optarg);
+	//		break;
+	//	case 't':
+	//		maxThreads = atoi(optarg);
+	//		break;
+	//	case 's':
+	//		serverType = optarg;
+	//		break;
+	//	case '?':
+	//	case 'v':
+	//		printf("Usage: %s [-p <port>] [-t <threads>] [-s <hahs|lf>]\n", argv[0]);
+	//		exit(0);
+	//	}
+	//}
 
-	if( 0 == strcasecmp( serverType, "hahs" ) ) {
-		SP_Server server( "", port, new SP_HttpHandlerAdapterFactory( new SP_HttpEchoHandlerFactory() ) );
+//#ifdef LOG_PERROR
+//	openlog("testhttps", LOG_CONS | LOG_PID | LOG_PERROR, LOG_USER);
+//#else
+//	openlog("testhttps", LOG_CONS | LOG_PID, LOG_USER);
+//#endif
+	
 
-		server.setTimeout( 60 );
-		server.setMaxThreads( maxThreads );
-		server.setReqQueueSize( 100, "HTTP/1.1 500 Sorry, server is busy now!\r\n" );
-		server.setIOChannelFactory( opensslFactory );
+	char basePath[256] = {0}, crtPath[256] = {0}, keyPath[256] = {0};
+	sp_getbasepath(basePath, sizeof(basePath));
+	snprintf(crtPath, sizeof(crtPath), "%s\\openssl\\newcert.crt", basePath);
+	snprintf(keyPath, sizeof(keyPath), "%s\\openssl\\newkey.key", basePath);
+
+	SP_OpensslChannelFactory* opensslFactory = new SP_OpensslChannelFactory();
+	if(0 != opensslFactory->init(crtPath, keyPath)) assert(0);
+
+	assert(0 == sp_initsock());
+
+	if(0)//0 == strcasecmp(serverType, "hahs"))
+	{
+		SP_Server server("", port, new SP_HttpHandlerAdapterFactory(new SP_HttpEchoHandlerFactory()));
+
+		server.setTimeout(60);
+		server.setMaxThreads(maxThreads);
+		server.setReqQueueSize(100, "HTTP/1.1 500 Sorry, server is busy now!\r\n");
+		server.setIOChannelFactory(opensslFactory);
 
 		server.runForever();
-	} else {
-		SP_LFServer server( "", port, new SP_HttpHandlerAdapterFactory( new SP_HttpEchoHandlerFactory() ) );
+	}
+	else
+	{
+		SP_LFServer server("", port, new SP_HttpHandlerAdapterFactory(new SP_HttpEchoHandlerFactory()));
 
-		server.setTimeout( 60 );
-		server.setMaxThreads( maxThreads );
-		server.setReqQueueSize( 100, "HTTP/1.1 500 Sorry, server is busy now!\r\n" );
-		server.setIOChannelFactory( opensslFactory );
+		server.setTimeout(60);
+		server.setMaxThreads(maxThreads);
+		server.setReqQueueSize(100, "HTTP/1.1 500 Sorry, server is busy now!\r\n");
+		server.setIOChannelFactory(opensslFactory);
 
 		server.runForever();
 	}
 
-	closelog();
+	//closelog();
 
 	return 0;
 }

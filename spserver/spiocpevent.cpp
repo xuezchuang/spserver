@@ -131,8 +131,7 @@ void SP_IocpEventHeap::shiftDown(int index, SP_IocpEvent_t* item)
 
 //===================================================================
 
-SP_IocpMsgQueue::SP_IocpMsgQueue(HANDLE completionPort,
-								 DWORD completionKey, QueueFunc_t func, void* arg)
+SP_IocpMsgQueue::SP_IocpMsgQueue(HANDLE completionPort, DWORD completionKey, QueueFunc_t func, void* arg)
 {
 	mCompletionPort = completionPort;
 	mCompletionKey = completionKey;
@@ -287,8 +286,7 @@ int SP_IocpEventArg::loadDisconnectEx(SOCKET fd)
 	return NULL != mDisconnectExFunc ? 0 : -1;
 }
 
-BOOL SP_IocpEventArg::disconnectEx(SOCKET fd, LPOVERLAPPED lpOverlapped,
-								   DWORD dwFlags, DWORD reserved)
+BOOL SP_IocpEventArg::disconnectEx(SOCKET fd, LPOVERLAPPED lpOverlapped, DWORD dwFlags, DWORD reserved)
 {
 	LPFN_DISCONNECTEX fnDisConnectEx = (LPFN_DISCONNECTEX)mDisconnectExFunc;
 	if(NULL != fnDisConnectEx)

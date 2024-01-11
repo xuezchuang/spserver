@@ -71,9 +71,10 @@ public:
 	}
 };
 
-int main( int argc, char * argv[] )
+int testhttp(int argc, char* argv[])
+//int main( int argc, char * argv[] )
 {
-	int port = 8080, maxThreads = 10;
+	int port = 8080, maxThreads = 1;
 	const char * serverType = "lf";
 
 #ifndef WIN32

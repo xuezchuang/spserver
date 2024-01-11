@@ -17,6 +17,8 @@ struct evbuffer;
 class SP_ArrayList;
 class SP_MsgBlockList;
 
+//#pragma pack(push, 1)
+
 typedef struct tagSP_Sid
 {
 	uint32_t mKey;
@@ -31,6 +33,7 @@ typedef struct tagSP_Sid
 		ePushSeq = 65535
 	};
 } SP_Sid_t;
+//#pragma pack(pop)
 
 class SP_SidList
 {

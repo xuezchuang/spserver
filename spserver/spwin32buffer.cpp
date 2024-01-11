@@ -39,8 +39,7 @@
 
 #include "spwin32buffer.hpp"
 
-struct spwin32buffer*
-	spwin32buffer_new(void)
+struct spwin32buffer* spwin32buffer_new(void)
 {
 	struct spwin32buffer* buffer;
 
@@ -49,8 +48,7 @@ struct spwin32buffer*
 	return (buffer);
 }
 
-void
-spwin32buffer_free(struct spwin32buffer* buffer)
+void spwin32buffer_free(struct spwin32buffer* buffer)
 {
 	if(buffer->orig_buffer != NULL)
 		free(buffer->orig_buffer);
@@ -70,8 +68,7 @@ spwin32buffer_free(struct spwin32buffer* buffer)
 	(x)->off = (y)->off; \
 } while (0)
 
-int
-spwin32buffer_add_buffer(struct spwin32buffer* outbuf, struct spwin32buffer* inbuf)
+int spwin32buffer_add_buffer(struct spwin32buffer* outbuf, struct spwin32buffer* inbuf)
 {
 	int res;
 
@@ -109,8 +106,7 @@ spwin32buffer_add_buffer(struct spwin32buffer* outbuf, struct spwin32buffer* inb
 	return (res);
 }
 
-int
-spwin32buffer_add_vprintf(struct spwin32buffer* buf, const char* fmt, va_list ap)
+int spwin32buffer_add_vprintf(struct spwin32buffer* buf, const char* fmt, va_list ap)
 {
 	char* buffer;
 	size_t space;
@@ -157,8 +153,7 @@ spwin32buffer_add_vprintf(struct spwin32buffer* buf, const char* fmt, va_list ap
 	/* NOTREACHED */
 }
 
-int
-spwin32buffer_add_printf(struct spwin32buffer* buf, const char* fmt, ...)
+int spwin32buffer_add_printf(struct spwin32buffer* buf, const char* fmt, ...)
 {
 	int res = -1;
 	va_list ap;
@@ -172,8 +167,7 @@ spwin32buffer_add_printf(struct spwin32buffer* buf, const char* fmt, ...)
 
 /* Reads data from an event buffer and drains the bytes read */
 
-int
-spwin32buffer_remove(struct spwin32buffer* buf, void* data, size_t datlen)
+int spwin32buffer_remove(struct spwin32buffer* buf, void* data, size_t datlen)
 {
 	size_t nread = datlen;
 	if(nread >= buf->off)
@@ -190,8 +184,7 @@ spwin32buffer_remove(struct spwin32buffer* buf, void* data, size_t datlen)
  * The returned buffer needs to be freed by the called.
  */
 
-char*
-spwin32buffer_readline(struct spwin32buffer* buffer)
+char* spwin32buffer_readline(struct spwin32buffer* buffer)
 {
 	u_char* data = EVBUFFER_DATA(buffer);
 	size_t len = EVBUFFER_LENGTH(buffer);
@@ -247,8 +240,7 @@ spwin32buffer_align(struct spwin32buffer* buf)
 
 /* Expands the available space in the event buffer to at least datlen */
 
-int
-spwin32buffer_expand(struct spwin32buffer* buf, size_t datlen)
+int spwin32buffer_expand(struct spwin32buffer* buf, size_t datlen)
 {
 	size_t need = buf->misalign + buf->off + datlen;
 
@@ -286,8 +278,7 @@ spwin32buffer_expand(struct spwin32buffer* buf, size_t datlen)
 	return (0);
 }
 
-int
-spwin32buffer_add(struct spwin32buffer* buf, const void* data, size_t datlen)
+int spwin32buffer_add(struct spwin32buffer* buf, const void* data, size_t datlen)
 {
 	size_t need = buf->misalign + buf->off + datlen;
 	size_t oldoff = buf->off;
@@ -307,8 +298,7 @@ spwin32buffer_add(struct spwin32buffer* buf, const void* data, size_t datlen)
 	return (0);
 }
 
-void
-spwin32buffer_drain(struct spwin32buffer* buf, size_t len)
+void spwin32buffer_drain(struct spwin32buffer* buf, size_t len)
 {
 	size_t oldoff = buf->off;
 
@@ -338,8 +328,7 @@ done:
 
 #define EVBUFFER_MAX_READ	4096
 
-int
-spwin32buffer_read(struct spwin32buffer* buf, int fd, int howmuch)
+int spwin32buffer_read(struct spwin32buffer* buf, int fd, int howmuch)
 {
 	u_char* p;
 	size_t oldoff = buf->off;
@@ -419,8 +408,7 @@ spwin32buffer_write(struct spwin32buffer* buffer, int fd)
 	return (n);
 }
 
-u_char*
-spwin32buffer_find(struct spwin32buffer* buffer, const u_char * what, size_t len)
+u_char* spwin32buffer_find(struct spwin32buffer* buffer, const u_char * what, size_t len)
 {
 	u_char* search = buffer->buffer, * end = search + buffer->off;
 	u_char* p;

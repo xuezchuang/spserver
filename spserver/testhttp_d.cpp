@@ -16,12 +16,15 @@
 #include "sphttpmsg.hpp"
 #include "spdispatcher.hpp"
 #include "spioutils.hpp"
+#include "spgetopt.h"
 
-class SP_HttpEchoHandler : public SP_HttpHandler
+#include "spwin32port.hpp"
+
+class SP_Http_1_Handler : public SP_HttpHandler
 {
 public:
-	SP_HttpEchoHandler() {}
-	virtual ~SP_HttpEchoHandler() {}
+	SP_Http_1_Handler() {}
+	virtual ~SP_Http_1_Handler() {}
 
 	virtual void handle(SP_HttpRequest* request, SP_HttpResponse* response)
 	{
@@ -66,19 +69,20 @@ public:
 	}
 };
 
-class SP_HttpEchoHandlerFactory : public SP_HttpHandlerFactory
+class SP_Http_1_HandlerFactory : public SP_HttpHandlerFactory
 {
 public:
-	SP_HttpEchoHandlerFactory() {}
-	virtual ~SP_HttpEchoHandlerFactory() {}
+	SP_Http_1_HandlerFactory() {}
+	virtual ~SP_Http_1_HandlerFactory() {}
 
 	virtual SP_HttpHandler* create() const
 	{
-		return new SP_HttpEchoHandler();
+		return new SP_Http_1_Handler();
 	}
 };
 
-int main(int argc, char* argv[])
+int testhttp_d(int argc, char* argv[])
+//int main(int argc, char* argv[])
 {
 	int port = 8080, maxThreads = 10;
 
@@ -107,8 +111,8 @@ int main(int argc, char* argv[])
 	int maxConnections = 10000, reqQueueSize = 10000;
 	const char* refusedMsg = "HTTP/1.1 500 Sorry, server is busy now!\r\n";
 
-	SP_HttpHandlerAdapterFactory factory(new SP_HttpEchoHandlerFactory());
-
+	SP_HttpHandlerAdapterFactory factory(new SP_Http_1_HandlerFactory());
+	assert(0 == sp_initsock());
 	int listenFd = -1;
 	if(0 == SP_IOUtils::tcpListen("", port, &listenFd))
 	{
@@ -142,7 +146,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	closelog();
+	sp_closelog();
 
 	return 0;
 }

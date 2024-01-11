@@ -33,8 +33,11 @@ BOOL SP_IocpEventCallback::addSession(SP_IocpEventArg* eventArg, HANDLE client, 
 
 	ULONG_PTR completionKey = 0;
 	SP_Sid_t sid = session->getSid();
-	assert(sizeof(completionKey) == sizeof(SP_Sid_t));
-	memcpy(&completionKey, &sid, sizeof(completionKey));
+	//assert(sizeof(completionKey) == sizeof(SP_Sid_t));
+	//memcpy(&completionKey, &sid, sizeof(completionKey));
+
+	completionKey = sid.mKey;
+	completionKey |= ((ULONG_PTR)sid.mSeq) << 32;
 
 	if(ret)
 	{
@@ -89,14 +92,12 @@ BOOL SP_IocpEventCallback::addRecv(SP_Session* session)
 			recvEvent->mWsaBuf.len = 0;
 
 			DWORD recvBytes = 0, flags = 0;
-			if(SOCKET_ERROR == WSARecv((SOCKET)iocpSession->mHandle, &(recvEvent->mWsaBuf), 1,
-			   &recvBytes, &flags, &(recvEvent->mOverlapped), NULL))
+			if(SOCKET_ERROR == WSARecv((SOCKET)iocpSession->mHandle, &(recvEvent->mWsaBuf), 1, &recvBytes, &flags, &(recvEvent->mOverlapped), NULL))
 			{
 				int lastError = WSAGetLastError();
 				if(ERROR_IO_PENDING != lastError)
 				{
-					sp_syslog(LOG_ERR, "session(%d.%d) WSARecv fail, errno %d, retry %d",
-							  sid.mKey, sid.mSeq, lastError, retry);
+					sp_syslog(LOG_ERR, "session(%d.%d) WSARecv fail, errno %d, retry %d", sid.mKey, sid.mSeq, lastError, retry);
 				}
 
 				if(WSAENOBUFS == lastError && retry < SP_MAX_RETRY - 1)
@@ -142,7 +143,8 @@ void SP_IocpEventCallback::onRecv(SP_IocpSession_t* iocpSession)
 
 	SP_Sid_t sid = session->getSid();
 
-	eventArg->getEventHeap()->erase(recvEvent);
+	//func eventLoop has erase
+	//eventArg->getEventHeap()->erase(recvEvent);
 
 	session->setReading(0);
 
@@ -163,8 +165,7 @@ void SP_IocpEventCallback::onRecv(SP_IocpSession_t* iocpSession)
 			}
 			else
 			{
-				sp_syslog(LOG_NOTICE, "session(%d.%d) busy, process session error later",
-						  sid.mKey, sid.mSeq);
+				sp_syslog(LOG_NOTICE, "session(%d.%d) busy, process session error later",sid.mKey, sid.mSeq);
 			}
 		}
 	}
@@ -176,8 +177,7 @@ void SP_IocpEventCallback::onRecv(SP_IocpSession_t* iocpSession)
 		}
 		else
 		{
-			sp_syslog(LOG_NOTICE, "session(%d.%d) busy, process session close later",
-					  sid.mKey, sid.mSeq);
+			sp_syslog(LOG_NOTICE, "session(%d.%d) busy, process session close later", sid.mKey, sid.mSeq);
 		}
 	}
 	else
@@ -219,7 +219,6 @@ BOOL SP_IocpEventCallback::addSend(SP_Session* session)
 
 	if(0 == session->getWriting())
 	{
-
 		const int SP_MAX_RETRY = 5;
 
 		for(int retry = 0; retry < SP_MAX_RETRY; retry++)
@@ -231,14 +230,12 @@ BOOL SP_IocpEventCallback::addSend(SP_Session* session)
 
 			DWORD sendBytes = 0;
 
-			if(SOCKET_ERROR == WSASend((SOCKET)iocpSession->mHandle, &(sendEvent->mWsaBuf), 1,
-			   &sendBytes, 0, &(sendEvent->mOverlapped), NULL))
+			if(SOCKET_ERROR == WSASend((SOCKET)iocpSession->mHandle, &(sendEvent->mWsaBuf), 1, &sendBytes, 0, &(sendEvent->mOverlapped), NULL))
 			{
 				int lastError = WSAGetLastError();
 				if(ERROR_IO_PENDING != lastError)
 				{
-					sp_syslog(LOG_ERR, "session(%d.%d) WSASend fail, errno %d, retry %d",
-							  sid.mKey, sid.mSeq, lastError, retry);
+					sp_syslog(LOG_ERR, "session(%d.%d) WSASend fail, errno %d, retry %d", sid.mKey, sid.mSeq, lastError, retry);
 				}
 
 				if(WSAENOBUFS == lastError && retry < SP_MAX_RETRY - 1)
@@ -387,10 +384,9 @@ BOOL SP_IocpEventCallback::onAccept(SP_IocpAcceptArg_t* acceptArg)
 	{
 		eventArg->getSessionManager()->put(sid.mKey, sid.mSeq, session);
 
-		if(eventArg->getSessionManager()->getCount() > acceptArg->mMaxConnections
-		   || eventArg->getInputResultQueue()->getLength() >= acceptArg->mReqQueueSize)
+		if(eventArg->getSessionManager()->getCount() > acceptArg->mMaxConnections ||
+		   eventArg->getInputResultQueue()->getLength() >= acceptArg->mReqQueueSize)
 		{
-
 			sp_syslog(LOG_WARNING, "System busy, session.count %d [%d], queue.length %d [%d]",
 					  eventArg->getSessionManager()->getCount(), acceptArg->mMaxConnections,
 					  eventArg->getInputResultQueue()->getLength(), acceptArg->mReqQueueSize);
@@ -459,15 +455,12 @@ void SP_IocpEventCallback::onResponse(void* queueData, void* arg)
 		}
 		else
 		{
-			sp_syslog(LOG_WARNING, "session(%d.%d) invalid, unknown FROM",
-					  fromSid.mKey, fromSid.mSeq);
+			sp_syslog(LOG_WARNING, "session(%d.%d) invalid, unknown FROM", fromSid.mKey, fromSid.mSeq);
 		}
 	}
 
-	for(SP_Message* msg = response->takeMessage();
-		NULL != msg; msg = response->takeMessage())
+	for(SP_Message* msg = response->takeMessage();NULL != msg; msg = response->takeMessage())
 	{
-
 		SP_SidList* sidList = msg->getToList();
 
 		if(msg->getTotalSize() > 0)
@@ -478,8 +471,7 @@ void SP_IocpEventCallback::onResponse(void* queueData, void* arg)
 				SP_Session* session = manager->get(sid.mKey, &seq);
 				if(seq == sid.mSeq && NULL != session)
 				{
-					if(0 != memcmp(&fromSid, &sid, sizeof(sid))
-					   && SP_Session::eExit == session->getStatus())
+					if(0 != memcmp(&fromSid, &sid, sizeof(sid)) && SP_Session::eExit == session->getStatus())
 					{
 						sidList->take(i);
 						msg->getFailure()->add(sid);
@@ -580,8 +572,7 @@ void SP_IocpEventCallback::onTimeout(SP_IocpEventArg* eventArg)
 		SP_IocpEvent_t* event = eventHeap->top();
 		struct timeval* first = &(event->mTimeout);
 
-		if((curr.tv_sec == first->tv_sec && curr.tv_usec >= first->tv_usec)
-		   || (curr.tv_sec > first->tv_sec))
+		if((curr.tv_sec == first->tv_sec && curr.tv_usec >= first->tv_usec)|| (curr.tv_sec > first->tv_sec))
 		{
 			event = eventHeap->pop();
 
@@ -626,6 +617,8 @@ BOOL SP_IocpEventCallback::eventLoop(SP_IocpEventArg* eventArg, SP_IocpAcceptArg
 	DWORD timeout = SP_IocpEventHelper::timeoutNext(eventArg->getEventHeap());
 
 	BOOL isSuccess = GetQueuedCompletionStatus(completionPort, &bytesTransferred, &completionKey, &overlapped, timeout);
+	//BOOL isSuccess = GetQueuedCompletionStatus(completionPort, &bytesTransferred, &completionKey, &overlapped, INFINITE);
+	
 	DWORD lastError = WSAGetLastError();
 
 	SP_Sid_t sid;
@@ -675,8 +668,7 @@ BOOL SP_IocpEventCallback::eventLoop(SP_IocpEventArg* eventArg, SP_IocpAcceptArg
 			{
 				char errmsg[512] = {0};
 				spwin32_strerror(lastError, errmsg, sizeof(errmsg));
-				sp_syslog(LOG_ERR, "GetQueuedCompletionStatus fail, errno %d, %s",
-						  lastError, errmsg);
+				sp_syslog(LOG_ERR, "GetQueuedCompletionStatus fail, errno %d, %s", lastError, errmsg);
 				return FALSE;
 			}
 		}
@@ -716,10 +708,10 @@ BOOL SP_IocpEventCallback::eventLoop(SP_IocpEventArg* eventArg, SP_IocpAcceptArg
 	}
 	else
 	{
-		if(NULL == iocpSession) return TRUE;
+		if(NULL == iocpSession) 
+			return TRUE;
 
-		SP_IocpEvent_t* iocpEvent =
-			CONTAINING_RECORD(overlapped, SP_IocpEvent_t, mOverlapped);
+		SP_IocpEvent_t* iocpEvent = CONTAINING_RECORD(overlapped, SP_IocpEvent_t, mOverlapped);
 
 		eventArg->getEventHeap()->erase(iocpEvent);
 
@@ -757,8 +749,7 @@ DWORD SP_IocpEventHelper::timeoutNext(SP_IocpEventHeap* eventHeap)
 
 	struct timeval* first = &(event->mTimeout);
 
-	DWORD ret = (first->tv_sec - curr.tv_sec) * 1000
-		+ (first->tv_usec - curr.tv_usec) / 1000;
+	DWORD ret = (first->tv_sec - curr.tv_sec) * 1000 + (first->tv_usec - curr.tv_usec) / 1000;
 
 	if(ret < 0) ret = 0;
 
@@ -1019,8 +1010,7 @@ void SP_IocpEventHelper::timeout(void* arg)
 	}
 
 	memset(&(iocpSession->mFreeEvent), 0, sizeof(OVERLAPPED));
-	PostQueuedCompletionStatus(eventArg->getCompletionPort(), 0,
-							   SP_IocpEventCallback::eKeyFree, &(iocpSession->mFreeEvent));
+	PostQueuedCompletionStatus(eventArg->getCompletionPort(), 0, SP_IocpEventCallback::eKeyFree, &(iocpSession->mFreeEvent));
 }
 
 void SP_IocpEventHelper::doStart(SP_Session* session)

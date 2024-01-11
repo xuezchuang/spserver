@@ -55,8 +55,7 @@ int SP_HttpMsgParser::isIgnoreContent() const
 	return 0 != mIgnoreContent;
 }
 
-int SP_HttpMsgParser::parseStartLine(SP_HttpMessage** message,
-									 const void* buffer, int len)
+int SP_HttpMsgParser::parseStartLine(SP_HttpMessage** message, const void* buffer, int len)
 {
 	int lineLen = 0;
 
@@ -109,8 +108,7 @@ int SP_HttpMsgParser::parseStartLine(SP_HttpMessage** message,
 	return lineLen;
 }
 
-int SP_HttpMsgParser::parseHeader(SP_HttpMessage* message,
-								  const void* buffer, int len)
+int SP_HttpMsgParser::parseHeader(SP_HttpMessage* message, const void* buffer, int len)
 {
 	int lineLen = 0;
 
@@ -140,8 +138,7 @@ int SP_HttpMsgParser::parseHeader(SP_HttpMessage* message,
 	return lineLen;
 }
 
-int SP_HttpMsgParser::getLine(const void* buffer, int len,
-							  char* line, int size)
+int SP_HttpMsgParser::getLine(const void* buffer, int len,char* line, int size)
 {
 	int lineLen = 0;
 
@@ -161,8 +158,7 @@ int SP_HttpMsgParser::getLine(const void* buffer, int len,
 	return lineLen;
 }
 
-int SP_HttpMsgParser::parseChunked(SP_HttpMessage* message,
-								   const void* buffer, int len, int* status)
+int SP_HttpMsgParser::parseChunked(SP_HttpMessage* message,const void* buffer, int len, int* status)
 {
 	int parsedLen = 0, hasChunk = 1;
 
@@ -203,8 +199,7 @@ int SP_HttpMsgParser::parseChunked(SP_HttpMessage* message,
 	return parsedLen;
 }
 
-int SP_HttpMsgParser::parseContent(SP_HttpMessage* message,
-								   const void* buffer, int len, int* status)
+int SP_HttpMsgParser::parseContent(SP_HttpMessage* message,const void* buffer, int len, int* status)
 {
 	int parsedLen = 0;
 
@@ -335,7 +330,7 @@ const char* SP_HttpMessage::HEADER_TRANSFER_ENCODING = "Transfer-Encoding";
 const char* SP_HttpMessage::HEADER_DATE = "Date";
 const char* SP_HttpMessage::HEADER_SERVER = "Server";
 
-SP_HttpMessage::SP_HttpMessage(int type): mType(type)
+SP_HttpMessage::SP_HttpMessage(int type) : mType(type)
 {
 	mContent = NULL;
 	mContentLength = 0;
@@ -640,7 +635,7 @@ const char* SP_HttpRequest::getParamValue(const char* name) const
 
 //---------------------------------------------------------
 
-SP_HttpResponse::SP_HttpResponse(): SP_HttpMessage(eResponse)
+SP_HttpResponse::SP_HttpResponse() : SP_HttpMessage(eResponse)
 {
 	mStatusCode = 200;
 	snprintf(mReasonPhrase, sizeof(mReasonPhrase), "%s", "OK");

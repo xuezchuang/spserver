@@ -11,33 +11,35 @@
 typedef struct ssl_st SSL;
 typedef struct ssl_ctx_st SSL_CTX;
 
-class SP_OpensslChannel : public SP_IOChannel {
+class SP_OpensslChannel : public SP_IOChannel
+{
 public:
-	SP_OpensslChannel( SSL_CTX * ctx );
+	SP_OpensslChannel(SSL_CTX* ctx);
 	virtual ~SP_OpensslChannel();
 
-	virtual int init( int fd );
+	virtual int init(int fd);
 
-	virtual int receive( SP_Session * session );
+	virtual int receive(SP_Session* session);
 
 private:
-	virtual int write_vec( struct iovec * vector, int count );
+	virtual int write_vec(struct iovec* vector, int count);
 
-	SSL_CTX * mCtx;
-	SSL * mSsl;
+	SSL_CTX* mCtx;
+	SSL* mSsl;
 };
 
-class SP_OpensslChannelFactory : public SP_IOChannelFactory {
+class SP_OpensslChannelFactory : public SP_IOChannelFactory
+{
 public:
 	SP_OpensslChannelFactory();
 	virtual ~SP_OpensslChannelFactory();
 
-	virtual SP_IOChannel * create() const;
+	virtual SP_IOChannel* create() const;
 
-	int init( const char * certFile, const char * keyFile );
+	int init(const char* certFile, const char* keyFile);
 
 private:
-	SSL_CTX * mCtx;
+	SSL_CTX* mCtx;
 };
 
 #endif

@@ -97,8 +97,7 @@ public:
 
 	int loadDisconnectEx(SOCKET fd);
 
-	BOOL disconnectEx(SOCKET fd, LPOVERLAPPED lpOverlapped,
-					  DWORD dwFlags, DWORD reserved);
+	BOOL disconnectEx(SOCKET fd, LPOVERLAPPED lpOverlapped, DWORD dwFlags, DWORD reserved);
 
 	void setTimeout(int timeout);
 	int getTimeout();

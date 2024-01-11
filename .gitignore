@@ -16,3 +16,12 @@ spserver/testsmtp
 spserver/teststress
 spserver/testthreadpool
 spserver/testunp
+/win32/.vs
+/win32/testiocphttps/x64
+/win32/x64/Debug/*.pdb
+/win32/x64/Release/web_root
+/win32/x64/Release/layuimini
+/win32/x64/Release/openssl
+/thirdparty/openssl/OpenSSL_Lib_Debug_x64/*.log
+/thirdparty/openssl/OpenSSL_Lib_Release_x64
+/thirdparty/openssl/OpenSSL_Lib_Debug_x64

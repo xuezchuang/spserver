@@ -15,6 +15,7 @@
 #include "sprequest.hpp"
 #include "spresponse.hpp"
 #include "spmsgblock.hpp"
+#include <locale>
 
 SP_HttpHandler :: ~SP_HttpHandler()
 {
@@ -202,16 +203,19 @@ int SP_HttpHandlerAdapter::handle(SP_Request* request, SP_Response* response)
 
 	// check date header
 	httpResponse->removeHeader(SP_HttpMessage::HEADER_DATE);
+
+	//std::locale::global(std::locale("en_US.UTF-8"));
+
 	time_t tTime = time(NULL);
 	struct tm tmTime;
 	gmtime_r(&tTime, &tmTime);
-	strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S %Z", &tmTime);
+	strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", &tmTime);
 	httpResponse->addHeader(SP_HttpMessage::HEADER_DATE, buffer);
 
 	// check Content-Type header
 	if(NULL == httpResponse->getHeaderValue(SP_HttpMessage::HEADER_CONTENT_TYPE))
 	{
-		httpResponse->addHeader(SP_HttpMessage::HEADER_CONTENT_TYPE, "text/html; charset=ISO-8859-1");
+		//httpResponse->addHeader(SP_HttpMessage::HEADER_CONTENT_TYPE, "text/html; charset=ISO-8859-1");
 	}
 
 	// check Server header

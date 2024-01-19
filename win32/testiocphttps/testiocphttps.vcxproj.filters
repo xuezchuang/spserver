@@ -88,9 +88,6 @@
     <ClCompile Include="..\..\spserver\spgetopt.c">
       <Filter>Resource Files\spserver</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\spserver\event_msgqueue.c">
-      <Filter>Resource Files\spserver</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\openssl\spopenssl.cpp">
       <Filter>Resource Files\spopenssl</Filter>
     </ClCompile>
@@ -178,9 +175,6 @@
       <Filter>Resource Files\spserver</Filter>
     </ClInclude>
     <ClInclude Include="..\..\spserver\spiocpevent.hpp">
-      <Filter>Resource Files\spserver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\spserver\event_msgqueue.h">
       <Filter>Resource Files\spserver</Filter>
     </ClInclude>
     <ClInclude Include="..\..\openssl\spopenssl.hpp">

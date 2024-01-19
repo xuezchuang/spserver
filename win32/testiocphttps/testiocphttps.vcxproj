@@ -104,15 +104,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\spserver;..\..\thirdparty\libevent\build\include;..\..\thirdparty\libevent\include;..\..\thirdparty\openssl\OpenSSL_Lib_Debug_x64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\spserver;..\..\thirdparty\libevent\build\include;..\..\thirdparty\openssl\OpenSSL_Lib_Debug_x64\include</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>event_core.lib;event_extra.lib;Crypt32.lib;libssl.lib;libcrypto.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\thirdparty\libevent\build\lib\Debug;..\..\thirdparty\openssl\OpenSSL_Lib_Debug_x64\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Crypt32.lib;libssl.lib;libcrypto.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\thirdparty\openssl\OpenSSL_Lib_Debug_x64\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -143,7 +143,6 @@
     <ClCompile Include="..\..\openssl\testiocphttps.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\spserver\event_msgqueue.c" />
     <ClCompile Include="..\..\spserver\spbuffer.cpp" />
     <ClCompile Include="..\..\spserver\spexecutor.cpp" />
     <ClCompile Include="..\..\spserver\spgetopt.c" />
@@ -173,7 +172,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\business\workHttp.h" />
     <ClInclude Include="..\..\openssl\spopenssl.hpp" />
-    <ClInclude Include="..\..\spserver\event_msgqueue.h" />
     <ClInclude Include="..\..\spserver\spbuffer.hpp" />
     <ClInclude Include="..\..\spserver\spexecutor.hpp" />
     <ClInclude Include="..\..\spserver\spgetopt.h" />

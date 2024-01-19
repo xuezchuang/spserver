@@ -9,6 +9,7 @@
 #include "spthread.hpp"
 
 class SP_IocpEventArg;
+
 class SP_ThreadPool;
 class SP_HandlerFactory;
 class SP_CompletionHandler;

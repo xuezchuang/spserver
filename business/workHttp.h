@@ -17,6 +17,8 @@ private:
 	void api_process(SP_HttpRequest* request, SP_HttpResponse* response);
 	void api_login(SP_HttpRequest* request, SP_HttpResponse* response);
 	void api_data(SP_HttpRequest* request, SP_HttpResponse* response);
+	void api_upload(SP_HttpRequest* request, SP_HttpResponse* response);
+	void api_filequery(SP_HttpRequest* request, SP_HttpResponse* response);
 };
 
 class SP_Http_iocp_HandlerFactory : public SP_HttpHandlerFactory

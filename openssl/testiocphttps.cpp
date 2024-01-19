@@ -15,6 +15,7 @@
 #include "sphttp.hpp"
 #include "sphttpmsg.hpp"
 #include "spiocpserver.hpp"
+#include "spiocplfserver.hpp"
 #include "spopenssl.hpp"
 #include "spgetopt.h"
 
@@ -28,8 +29,8 @@ void sp_getbasepath_ipcp_https(char* path, int size)
 	if(NULL != pos) *pos = '\0';
 }
 
-//int testiocphttps(int argc, char* argv[])
-int main(int argc, char* argv[])
+int testiocphttps(int argc, char* argv[])
+//int main(int argc, char* argv[])
 {
 	int port = 8080, maxThreads = 10;
 
@@ -70,7 +71,8 @@ int main(int argc, char* argv[])
 	SP_OpensslChannelFactory* opensslFactory = new SP_OpensslChannelFactory();
 	if(0 != opensslFactory->init(crtPath, keyPath)) assert(0);
 
-	SP_IocpServer server("", port, new SP_HttpHandlerAdapterFactory(new SP_Http_iocp_HandlerFactory()));
+	//SP_IocpServer server("", port, new SP_HttpHandlerAdapterFactory(new SP_Http_iocp_HandlerFactory()));
+	SP_IocpLFServer server("", port, new SP_HttpHandlerAdapterFactory(new SP_Http_iocp_HandlerFactory()));
 
 	server.setTimeout(60);
 	server.setMaxThreads(maxThreads);

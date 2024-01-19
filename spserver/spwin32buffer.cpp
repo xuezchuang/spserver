@@ -129,8 +129,13 @@ int spwin32buffer_add_vprintf(struct spwin32buffer* buf, const char* fmt, va_lis
 		va_copy(aq, ap);
 
 #ifdef WIN32
-		sz = _vsnprintf(buffer, space - 1, fmt, aq);
+		sz = _vsnprintf(buffer, space, fmt, aq);
+		if(sz < 0)
+		{
+			sz = _vscprintf(fmt, aq);
+		}
 		buffer[space - 1] = '\0';
+		
 #else
 		sz = vsnprintf(buffer, space, fmt, aq);
 #endif

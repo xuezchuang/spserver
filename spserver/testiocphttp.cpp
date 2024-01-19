@@ -16,6 +16,7 @@
 
 #include "spwin32iocp.hpp"
 #include "spiocpserver.hpp"
+#include "spiocplfserver.hpp"
 
 #include "sphttp.hpp"
 #include "sphttpmsg.hpp"
@@ -32,15 +33,16 @@
 
 #include "../business/workHttp.h"
 
-int testiocphttp(int argc, char* argv[])
-//int main(int argc, char* argv[])
+//int testiocphttp(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	int port = 8080, maxThreads = 10;
 	const char* serverType = "hahs";
 
 	if(0 != sp_initsock()) assert(0);
 
-	SP_IocpServer server("", port, new SP_HttpHandlerAdapterFactory(new SP_Http_iocp_HandlerFactory()));
+	//SP_IocpServer server("", port, new SP_HttpHandlerAdapterFactory(new SP_Http_iocp_HandlerFactory()));
+	SP_IocpLFServer server("", port, new SP_HttpHandlerAdapterFactory(new SP_Http_iocp_HandlerFactory()));
 
 	server.setTimeout(60);
 	server.setMaxThreads(maxThreads);

@@ -3,7 +3,10 @@
 
 #include <windows.h>
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <string.h>
+//#include <dirent.h>
+#include "spbuffer.hpp"
 
 /****************************************************************************/
 /*					mongoose:主要解析char									*/
@@ -52,6 +55,15 @@ struct mg_str
 	const char* ptr;  // Pointer to string data
 	size_t len;       // String len
 };
+
+// Parameter for mg_http_next_multipart
+struct mg_http_part
+{
+	struct mg_str name;      // Form field name
+	struct mg_str filename;  // Filename for file uploads
+	struct mg_str body;      // Part contents
+};
+
 #define MG_C_STR(a) { (a), sizeof(a) - 1 }
 static struct mg_str s_known_types[] =
 {
@@ -414,6 +426,89 @@ bool mg_match(const char* s, const char* p)
 	return true;
 }
 
+struct mg_str mg_str_n(const char* s, size_t n)
+{
+	struct mg_str str = {s, n};
+	return str;
+}
+
+static struct mg_str stripquotes(struct mg_str s)
+{
+	return s.len > 1 && s.ptr[0] == '"' && s.ptr[s.len - 1] == '"' ? mg_str_n(s.ptr + 1, s.len - 2) : s;
+}
+
+struct mg_str mg_http_get_header_var(struct mg_str s, struct mg_str v)
+{
+	size_t i;
+	for(i = 0; v.len > 0 && i + v.len + 2 < s.len; i++)
+	{
+		if(s.ptr[i + v.len] == '=' && memcmp(&s.ptr[i], v.ptr, v.len) == 0)
+		{
+			const char* p = &s.ptr[i + v.len + 1], * b = p, * x = &s.ptr[s.len];
+			int q = p < x && *p == '"' ? 1 : 0;
+			while(p < x && (q ? p == b || *p != '"' : *p != ';' && *p != ' ' && *p != ','))
+				p++;
+			// MG_INFO(("[%.*s] [%.*s] [%.*s]", (int) s.len, s.ptr, (int) v.len,
+			// v.ptr, (int) (p - b), b));
+			return stripquotes(mg_str_n(b, (size_t)(p - b + q)));
+		}
+	}
+	return mg_str_n(NULL, 0);
+}
+
+// Multipart POST example:
+// --xyz
+// Content-Disposition: form-data; name="val"
+//
+// abcdef
+// --xyz
+// Content-Disposition: form-data; name="foo"; filename="a.txt"
+// Content-Type: text/plain
+//
+// hello world
+//
+// --xyz--
+size_t mg_http_next_multipart(struct mg_str body, size_t ofs,struct mg_http_part* part)
+{
+	struct mg_str cd = mg_str_n("Content-Disposition", 19);
+	const char* s = body.ptr;
+	size_t b = ofs, h1, h2, b1, b2, max = body.len;
+
+	// Init part params
+	if(part != NULL) part->name = part->filename = part->body = mg_str_n(0, 0);
+
+	// Skip boundary
+	while(b + 2 < max && s[b] != '\r' && s[b + 1] != '\n') b++;
+	if(b <= ofs || b + 2 >= max) return 0;
+	// MG_INFO(("B: %zu %zu [%.*s]", ofs, b - ofs, (int) (b - ofs), s));
+
+	// Skip headers
+	h1 = h2 = b + 2;
+	for(;;)
+	{
+		while(h2 + 2 < max && s[h2] != '\r' && s[h2 + 1] != '\n') h2++;
+		if(h2 == h1) break;
+		if(h2 + 2 >= max) return 0;
+		// MG_INFO(("Header: [%.*s]", (int) (h2 - h1), &s[h1]));
+		if(part != NULL && h1 + cd.len + 2 < h2 && s[h1 + cd.len] == ':' &&
+		   mg_ncasecmp(&s[h1], cd.ptr, cd.len) == 0)
+		{
+			struct mg_str v = mg_str_n(&s[h1 + cd.len + 2], h2 - (h1 + cd.len + 2));
+			part->name = mg_http_get_header_var(v, mg_str_n("name", 4));
+			part->filename = mg_http_get_header_var(v, mg_str_n("filename", 8));
+		}
+		h1 = h2 = h2 + 2;
+	}
+	b1 = b2 = h2 + 2;
+	while(b2 + 2 + (b - ofs) + 2 < max && !(s[b2] == '\r' && s[b2 + 1] == '\n' && memcmp(&s[b2 + 2], s, b - ofs) == 0))
+		b2++;
+
+	if(b2 + 2 >= max) return 0;
+	if(part != NULL) part->body = mg_str_n(&s[b1], b2 - b1);
+	// MG_INFO(("Body: [%.*s]", (int) (b2 - b1), &s[b1]));
+	return b2 + 2;
+}
+
 struct user
 {
 	const char* name, * pass, * token;
@@ -431,6 +526,8 @@ static struct user users[] =
 /****************************************************************************/
 /*					SP_Http_iocp_Handler									*/
 /****************************************************************************/
+SP_Buffer sp_buffer;
+//SP_Buffer sp_temp_buffer;
 
 void SP_Http_iocp_Handler::handle(SP_HttpRequest* request, SP_HttpResponse* response)
 {
@@ -501,6 +598,10 @@ void SP_Http_iocp_Handler::static_handle(SP_HttpRequest* request, SP_HttpRespons
 	{
 		return api_process(request, response);
 	}
+	else if(mg_match(url.c_str(), "/page/api/upload"))
+	{
+		api_upload(request, response);
+	}
 	else
 	{
 		for(int i = 0; i < url.length(); i++)
@@ -557,6 +658,10 @@ void SP_Http_iocp_Handler::api_process(SP_HttpRequest* request, SP_HttpResponse*
 	else if(mg_match(url.c_str(), "/api/data"))
 	{
 		api_data(request, response);
+	}
+	else if(mg_match(url.c_str(), "/api/file-query"))
+	{
+		api_filequery(request, response);
 	}
 }
 
@@ -627,4 +732,131 @@ void SP_Http_iocp_Handler::api_data(SP_HttpRequest* request, SP_HttpResponse* re
 	char buf[256] = {0};
 	sprintf(buf, "{\"%s\":\"%s\",\"%s\":\"%s\"}", "text", "Hello!", "data", "somedata");
 	response->appendContent(buf);
+}
+
+void SP_Http_iocp_Handler::api_upload(SP_HttpRequest* request, SP_HttpResponse* response)
+{
+	const char* content_lenght = request->getHeaderValue("Content-Length");
+	const char* content_type = request->getHeaderValue("Content-Type");
+	const void* mcontent = request->getContent();
+
+	struct mg_http_part part;
+	size_t ofs = 0;
+	mg_str mstr = {(const char*)mcontent,size_t(request->getContentLength())};
+	while((ofs = mg_http_next_multipart(mstr, ofs, &part)) > 0)
+	{
+		if(part.filename.ptr)
+		{
+			char file_data[256] = {0};
+			memcpy(file_data, part.filename.ptr, part.filename.len);
+			file_data[part.filename.len] = '\0';
+			FILE* file_ptr = fopen(file_data, "wb");
+			if(fwrite(part.body.ptr, sizeof(char), part.body.len, file_ptr) != part.body.len)
+			{
+				fprintf(stderr, "写入文件时发生错误\n");
+				fclose(file_ptr);
+				return;
+			}
+			fclose(file_ptr);
+			response->setStatusCode(200);
+			response->setReasonPhrase(mg_http_status_code_str(200));
+			response->addHeader(SP_HttpMessage::HEADER_CONTENT_TYPE, "application/json");
+			sp_buffer.reset();
+			sp_buffer.printf("{"
+							 "%s\":%d,"
+							 "%s\":\"%s\","
+							 "%s\":{\"%s\":\"%s\"}}",
+							 "code", 0,""
+							 "msg", "上传成功",""
+							 "data", "src", file_data);
+			response->appendContent(sp_buffer.getBuffer());
+		}
+	}
+}
+
+void SP_Http_iocp_Handler::api_filequery(SP_HttpRequest* request, SP_HttpResponse* response)
+{
+	char tpath[MAX_PATH];
+	if(GetModuleFileName(NULL, tpath, MAX_PATH) == 0)
+	{
+		printf("Error getting path\n");
+	}
+	char* lastBackslash = strrchr(tpath, '\\');
+	if(lastBackslash != NULL)
+	{
+		*(lastBackslash + 1) = '\0';
+	}
+	std::string path = std::string(tpath) + "layuimini\\page\\";
+	std::string dir = path + "*.html";
+
+	// 打开目录
+	WIN32_FIND_DATA findFileData;
+	HANDLE hFind = FindFirstFile(dir.c_str(), &findFileData);
+
+	if(hFind == INVALID_HANDLE_VALUE)
+	{
+		printf("No .html files found.\n");
+	}
+	else
+	{
+		int index = 0;
+		std::string data_list;
+		sp_buffer.reset();
+		//sp_buffer.printf("[");
+		do
+		{
+			index++;
+			std::string filepath = path + findFileData.cFileName;
+			time_t mtime = 0;
+			size_t size;
+			p_stat(path.c_str(), &size, &mtime);
+			
+			sp_buffer.printf(
+					"{"
+					"\"id\":\"%d\","
+					"\"fileID\":\"%d\","
+					"\"fileName\":\"%s\","
+					"\"Size\":\"%zu\","
+					"\"fileSize\":\"%zu\","
+					"\"uploadTime\":\"%zu\","
+					"\"fileStatus\":\"%d\""
+					"}",
+					index,         // 对应第一个 %d
+					index,         // 对应第二个 %d
+					findFileData.cFileName, // 对应 %s
+					size,          // 对应第三个 %d
+					size,          // 对应第四个 %d
+					mtime,         // 对应第五个 %d
+					0              // 对应第六个 %d
+			);
+
+		} 
+		while(FindNextFile(hFind, &findFileData) != 0);
+		if(index != 0)
+		{
+			int tmp_size = (int)sp_buffer.getSize();
+			sp_buffer.append("\0", 1);
+			//sp_buffer.printf("[%s]", sp_buffer.getRawBuffer());
+			sp_buffer.printf(
+				"{"
+				"\"code\":\"%d\","
+				"\"msg\":\"%s\","
+				"\"count\":\"%d\","
+				"\"data\":[%s]"
+				"}",
+				0,
+				"",
+				index,
+				sp_buffer.getRawBuffer()
+			);
+			sp_buffer.erase(tmp_size + 1);
+
+			response->setStatusCode(200);
+			response->setReasonPhrase(mg_http_status_code_str(200));
+			response->addHeader(SP_HttpMessage::HEADER_CONTENT_TYPE, "application/json");
+			response->setContent(sp_buffer.getBuffer());
+		}
+		FindClose(hFind);
+	}
+
 }

@@ -43,6 +43,8 @@ public:
 
 	SP_Buffer* take();
 
+	void append_from_reverse(int nInex, const char* buffer, int len = 0);
+	void* getWriteBuffer();
 private:
 	sp_evbuffer_t* mBuffer;
 

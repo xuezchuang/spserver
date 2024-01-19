@@ -3,6 +3,8 @@
 #include "sphttp.hpp"
 #include <string>
 
+void InitGlobalInfo();
+
 class SP_Http_iocp_Handler : public SP_HttpHandler
 {
 public:
@@ -18,6 +20,7 @@ private:
 	void api_login(SP_HttpRequest* request, SP_HttpResponse* response);
 	void api_data(SP_HttpRequest* request, SP_HttpResponse* response);
 	void api_upload(SP_HttpRequest* request, SP_HttpResponse* response);
+	void api_down(SP_HttpRequest* request, SP_HttpResponse* response);
 	void api_filequery(SP_HttpRequest* request, SP_HttpResponse* response);
 };
 

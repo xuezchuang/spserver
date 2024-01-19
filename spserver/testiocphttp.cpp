@@ -36,6 +36,7 @@
 //int testiocphttp(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
+	InitGlobalInfo();
 	int port = 8080, maxThreads = 10;
 	const char* serverType = "hahs";
 

@@ -159,6 +159,17 @@ SP_Buffer* SP_Buffer::take()
 	return ret;
 }
 
+void SP_Buffer::append_from_reverse(int nInex, const char* buffer,int len)
+{
+	mBuffer->off -= nInex;
+	spwin32buffer_add(mBuffer, buffer, len);
+}
+
+void* SP_Buffer::getWriteBuffer()
+{
+	return mBuffer->buffer;
+}
+
 const void* SP_Buffer::find(const void* key, size_t len)
 {
 	//return (void*)evbuffer_find( mBuffer, (u_char*)key, len );

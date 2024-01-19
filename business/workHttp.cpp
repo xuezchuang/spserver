@@ -523,11 +523,37 @@ static struct user users[] =
 };
 
 
+
 /****************************************************************************/
 /*					SP_Http_iocp_Handler									*/
 /****************************************************************************/
-SP_Buffer sp_buffer;
-//SP_Buffer sp_temp_buffer;
+
+
+// 定义结构体
+struct GlobalServerInfo
+{
+	SP_Buffer sp_buffer;
+	//SP_Buffer sp_temp_buffer;
+	char sp_path[256] = {0};
+};
+
+// 声明一个全局变量
+struct GlobalServerInfo g_ServerInfo;
+
+
+void InitGlobalInfo()
+{
+	g_ServerInfo.sp_buffer.reserve(10 * 1024);
+	if(GetModuleFileName(NULL, g_ServerInfo.sp_path, MAX_PATH) == 0)
+	{
+		printf("Error getting path\n");
+	}
+	char* lastBackslash = strrchr(g_ServerInfo.sp_path, '\\');
+	if(lastBackslash != NULL)
+	{
+		*(lastBackslash + 1) = '\0';
+	}
+}
 
 void SP_Http_iocp_Handler::handle(SP_HttpRequest* request, SP_HttpResponse* response)
 {
@@ -577,19 +603,7 @@ void SP_Http_iocp_Handler::handle(SP_HttpRequest* request, SP_HttpResponse* resp
 void SP_Http_iocp_Handler::static_handle(SP_HttpRequest* request, SP_HttpResponse* response)
 {
 	std::string url = request->getURL();
-
-	char tpath[MAX_PATH];
-	if(GetModuleFileName(NULL, tpath, MAX_PATH) == 0)
-	{
-		printf("Error getting path\n");
-	}
-	char* lastBackslash = strrchr(tpath, '\\');
-	if(lastBackslash != NULL)
-	{
-		*(lastBackslash+1) = '\0';
-	}
-
-	std::string path = tpath;
+	std::string path = g_ServerInfo.sp_path;
 	path += "layuimini";
 	//path += "web_root";
 	if(url == "/")
@@ -598,9 +612,9 @@ void SP_Http_iocp_Handler::static_handle(SP_HttpRequest* request, SP_HttpRespons
 	{
 		return api_process(request, response);
 	}
-	else if(mg_match(url.c_str(), "/page/api/upload"))
+	else if(mg_match(url.c_str(), "/page/api/#"))
 	{
-		api_upload(request, response);
+		return api_process(request, response);
 	}
 	else
 	{
@@ -640,11 +654,12 @@ void SP_Http_iocp_Handler::static_handle(SP_HttpRequest* request, SP_HttpRespons
 	}
 
 	response->addHeader("Etag", etag);
-	char buffer[512] = {0};
+	g_ServerInfo.sp_buffer.reset();
+	int maxlen = g_ServerInfo.sp_buffer.getCapacity();
 	size_t len = 0;
-	while((len = p_read(fp, buffer, 512)) != 0)
+	while((len = p_read(fp, g_ServerInfo.sp_buffer.getWriteBuffer(), maxlen)) != 0)
 	{
-		response->appendContent(buffer, (int)len);
+		response->appendContent(g_ServerInfo.sp_buffer.getWriteBuffer(), (int)len);
 	}
 }
 
@@ -659,9 +674,17 @@ void SP_Http_iocp_Handler::api_process(SP_HttpRequest* request, SP_HttpResponse*
 	{
 		api_data(request, response);
 	}
-	else if(mg_match(url.c_str(), "/api/file-query"))
+	else if(mg_match(url.c_str(), "/page/api/file-query"))
 	{
 		api_filequery(request, response);
+	}
+	else if(mg_match(url.c_str(), "/page/api/upload"))
+	{
+		api_upload(request, response);
+	}
+	else if(mg_match(url.c_str(), "/api/file-download"))
+	{
+		api_down(request, response);
 	}
 }
 
@@ -761,32 +784,47 @@ void SP_Http_iocp_Handler::api_upload(SP_HttpRequest* request, SP_HttpResponse* 
 			response->setStatusCode(200);
 			response->setReasonPhrase(mg_http_status_code_str(200));
 			response->addHeader(SP_HttpMessage::HEADER_CONTENT_TYPE, "application/json");
-			sp_buffer.reset();
-			sp_buffer.printf("{"
+			g_ServerInfo.sp_buffer.reset();
+			g_ServerInfo.sp_buffer.printf("{"
 							 "%s\":%d,"
 							 "%s\":\"%s\","
 							 "%s\":{\"%s\":\"%s\"}}",
 							 "code", 0,""
 							 "msg", "上传成功",""
 							 "data", "src", file_data);
-			response->appendContent(sp_buffer.getBuffer());
+			response->appendContent(g_ServerInfo.sp_buffer.getBuffer());
 		}
+	}
+}
+
+void SP_Http_iocp_Handler::api_down(SP_HttpRequest* request, SP_HttpResponse* response)
+{
+	const char* fileName = request->getHeaderValue("fileName");
+	std::string fileNamePath = std::string(g_ServerInfo.sp_path) + "layuimini//page//" + fileName;
+
+	void* fp = p_open(fileNamePath.c_str());
+	if(fp == 0)
+		return;
+
+	response->setStatusCode(200);
+	response->setReasonPhrase(mg_http_status_code_str(200));
+	response->addHeader("Content-Type", "pplication/octet-stream");
+
+	g_ServerInfo.sp_buffer.reset();
+	g_ServerInfo.sp_buffer.printf("attachment; filename=\"%s\"",fileName);
+	response->addHeader("Content-Disposition", (const char*)g_ServerInfo.sp_buffer.getBuffer());
+	g_ServerInfo.sp_buffer.reset();
+	int maxlen = g_ServerInfo.sp_buffer.getCapacity();
+	size_t len = 0;
+	while((len = p_read(fp, g_ServerInfo.sp_buffer.getWriteBuffer(), maxlen)) != 0)
+	{
+		response->appendContent(g_ServerInfo.sp_buffer.getWriteBuffer(), (int)len);
 	}
 }
 
 void SP_Http_iocp_Handler::api_filequery(SP_HttpRequest* request, SP_HttpResponse* response)
 {
-	char tpath[MAX_PATH];
-	if(GetModuleFileName(NULL, tpath, MAX_PATH) == 0)
-	{
-		printf("Error getting path\n");
-	}
-	char* lastBackslash = strrchr(tpath, '\\');
-	if(lastBackslash != NULL)
-	{
-		*(lastBackslash + 1) = '\0';
-	}
-	std::string path = std::string(tpath) + "layuimini\\page\\";
+	std::string path = std::string(g_ServerInfo.sp_path) + "layuimini\\page\\";
 	std::string dir = path + "*.html";
 
 	// 打开目录
@@ -801,7 +839,7 @@ void SP_Http_iocp_Handler::api_filequery(SP_HttpRequest* request, SP_HttpRespons
 	{
 		int index = 0;
 		std::string data_list;
-		sp_buffer.reset();
+		g_ServerInfo.sp_buffer.reset();
 		//sp_buffer.printf("[");
 		do
 		{
@@ -809,9 +847,9 @@ void SP_Http_iocp_Handler::api_filequery(SP_HttpRequest* request, SP_HttpRespons
 			std::string filepath = path + findFileData.cFileName;
 			time_t mtime = 0;
 			size_t size;
-			p_stat(path.c_str(), &size, &mtime);
+			p_stat(filepath.c_str(), &size, &mtime);
 			
-			sp_buffer.printf(
+			g_ServerInfo.sp_buffer.printf(
 					"{"
 					"\"id\":\"%d\","
 					"\"fileID\":\"%d\","
@@ -820,41 +858,42 @@ void SP_Http_iocp_Handler::api_filequery(SP_HttpRequest* request, SP_HttpRespons
 					"\"fileSize\":\"%zu\","
 					"\"uploadTime\":\"%zu\","
 					"\"fileStatus\":\"%d\""
-					"}",
+					"},",
 					index,         // 对应第一个 %d
 					index,         // 对应第二个 %d
 					findFileData.cFileName, // 对应 %s
 					size,          // 对应第三个 %d
-					size,          // 对应第四个 %d
+					size/1024,          // 对应第四个 %d
 					mtime,         // 对应第五个 %d
-					0              // 对应第六个 %d
+					index % 2 == 0              // 对应第六个 %d
 			);
 
 		} 
 		while(FindNextFile(hFind, &findFileData) != 0);
 		if(index != 0)
 		{
-			int tmp_size = (int)sp_buffer.getSize();
-			sp_buffer.append("\0", 1);
+			int tmp_size = (int)g_ServerInfo.sp_buffer.getSize();
+			//sp_buffer.erase(tmp_size);
+			g_ServerInfo.sp_buffer.append_from_reverse(1,"\0",1);
 			//sp_buffer.printf("[%s]", sp_buffer.getRawBuffer());
-			sp_buffer.printf(
+			g_ServerInfo.sp_buffer.printf(
 				"{"
-				"\"code\":\"%d\","
+				"\"code\":%d,"
 				"\"msg\":\"%s\","
-				"\"count\":\"%d\","
+				"\"count\":%d,"
 				"\"data\":[%s]"
 				"}",
 				0,
 				"",
 				index,
-				sp_buffer.getRawBuffer()
+				g_ServerInfo.sp_buffer.getRawBuffer()
 			);
-			sp_buffer.erase(tmp_size + 1);
+			g_ServerInfo.sp_buffer.erase(tmp_size);
 
 			response->setStatusCode(200);
 			response->setReasonPhrase(mg_http_status_code_str(200));
 			response->addHeader(SP_HttpMessage::HEADER_CONTENT_TYPE, "application/json");
-			response->setContent(sp_buffer.getBuffer());
+			response->setContent(g_ServerInfo.sp_buffer.getBuffer());
 		}
 		FindClose(hFind);
 	}

@@ -649,6 +649,7 @@ void SP_Http_iocp_Handler::static_handle(SP_HttpRequest* request, SP_HttpRespons
 			//update resource file
 			response->setStatusCode(304);
 			response->setReasonPhrase(mg_http_status_code_str(304));
+			fclose((FILE*)fp);
 			return;
 		}
 	}
@@ -659,8 +660,9 @@ void SP_Http_iocp_Handler::static_handle(SP_HttpRequest* request, SP_HttpRespons
 	size_t len = 0;
 	while((len = p_read(fp, g_ServerInfo.sp_buffer.getWriteBuffer(), maxlen)) != 0)
 	{
-		response->appendContent(g_ServerInfo.sp_buffer.getWriteBuffer(), (int)len);
+		response->appendContent(g_ServerInfo.sp_buffer.getWriteBuffer(), (int)len, (int)size);
 	}
+	fclose((FILE*)fp);
 }
 
 void SP_Http_iocp_Handler::api_process(SP_HttpRequest* request, SP_HttpResponse* response)
@@ -786,9 +788,9 @@ void SP_Http_iocp_Handler::api_upload(SP_HttpRequest* request, SP_HttpResponse* 
 			response->addHeader(SP_HttpMessage::HEADER_CONTENT_TYPE, "application/json");
 			g_ServerInfo.sp_buffer.reset();
 			g_ServerInfo.sp_buffer.printf("{"
-							 "%s\":%d,"
-							 "%s\":\"%s\","
-							 "%s\":{\"%s\":\"%s\"}}",
+							 "\"%s\":%d,"
+							 "\"%s\":\"%s\","
+							 "\"%s\":{\"%s\":\"%s\"}}",
 							 "code", 0,""
 							 "msg", "上传成功",""
 							 "data", "src", file_data);
@@ -816,10 +818,18 @@ void SP_Http_iocp_Handler::api_down(SP_HttpRequest* request, SP_HttpResponse* re
 	g_ServerInfo.sp_buffer.reset();
 	int maxlen = g_ServerInfo.sp_buffer.getCapacity();
 	size_t len = 0;
+
+	time_t mtime = 0;
+	size_t size;
+	p_stat(fileNamePath.c_str(), &size, &mtime);
+
 	while((len = p_read(fp, g_ServerInfo.sp_buffer.getWriteBuffer(), maxlen)) != 0)
 	{
-		response->appendContent(g_ServerInfo.sp_buffer.getWriteBuffer(), (int)len);
+		response->appendContent(g_ServerInfo.sp_buffer.getWriteBuffer(), (int)len, (int)size);
+		g_ServerInfo.sp_buffer.reset();
+		len = 0;
 	}
+	fclose((FILE*)fp);
 }
 
 void SP_Http_iocp_Handler::api_filequery(SP_HttpRequest* request, SP_HttpResponse* response)

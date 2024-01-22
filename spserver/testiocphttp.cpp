@@ -42,8 +42,8 @@ int main(int argc, char* argv[])
 
 	if(0 != sp_initsock()) assert(0);
 
-	//SP_IocpServer server("", port, new SP_HttpHandlerAdapterFactory(new SP_Http_iocp_HandlerFactory()));
-	SP_IocpLFServer server("", port, new SP_HttpHandlerAdapterFactory(new SP_Http_iocp_HandlerFactory()));
+	SP_IocpServer server("", port, new SP_HttpHandlerAdapterFactory(new SP_Http_iocp_HandlerFactory()));
+	//SP_IocpLFServer server("", port, new SP_HttpHandlerAdapterFactory(new SP_Http_iocp_HandlerFactory()));
 
 	server.setTimeout(60);
 	server.setMaxThreads(maxThreads);

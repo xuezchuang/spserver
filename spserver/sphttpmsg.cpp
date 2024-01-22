@@ -233,8 +233,7 @@ int SP_HttpMsgParser::append(const void* buffer, int len)
 	if(NULL != mMessage)
 	{
 		// parse header
-		for(int headerLen = 1; eHeader == mStatus
-			&& headerLen > 0 && parsedLen < len; parsedLen += headerLen)
+		for(int headerLen = 1; eHeader == mStatus && headerLen > 0 && parsedLen < len; parsedLen += headerLen)
 		{
 			headerLen = parseHeader(mMessage, ((char*)buffer) + parsedLen, len - parsedLen);
 
@@ -242,8 +241,7 @@ int SP_HttpMsgParser::append(const void* buffer, int len)
 			if('\r' == ch || '\n' == ch) mStatus = eContent;
 		}
 
-		if(SP_HttpMessage::eResponse == mMessage->getType()
-		   && eContent == mStatus && mIgnoreContent) mStatus = eCompleted;
+		if(SP_HttpMessage::eResponse == mMessage->getType() && eContent == mStatus && mIgnoreContent) mStatus = eCompleted;
 
 		// parse content
 		if(eContent == mStatus)
@@ -251,13 +249,11 @@ int SP_HttpMsgParser::append(const void* buffer, int len)
 			const char* encoding = mMessage->getHeaderValue(SP_HttpMessage::HEADER_TRANSFER_ENCODING);
 			if(NULL != encoding && 0 == strcasecmp(encoding, "chunked"))
 			{
-				parsedLen += parseChunked(mMessage, ((char*)buffer) + parsedLen,
-										  len - parsedLen, &mStatus);
+				parsedLen += parseChunked(mMessage, ((char*)buffer) + parsedLen, len - parsedLen, &mStatus);
 			}
 			else
 			{
-				parsedLen += parseContent(mMessage, ((char*)buffer) + parsedLen,
-										  len - parsedLen, &mStatus);
+				parsedLen += parseContent(mMessage, ((char*)buffer) + parsedLen, len - parsedLen, &mStatus);
 			}
 		}
 
